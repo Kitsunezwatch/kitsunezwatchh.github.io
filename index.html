@@ -1,0 +1,4022 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitsunez - Стриминговая платформа</title>
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/Sht7vLz/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Общие стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #ff5e00;
+            --secondary-color: #8a2be2;
+            --admin-color: #ff3366;
+            --dark-bg: #0f0f0f;
+            --medium-bg: #1a1a1a;
+            --light-bg: #2a2a2a;
+            --text-color: #fff;
+            --text-secondary: #ddd;
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Шапка */
+        header {
+            background: var(--dark-bg);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            border-bottom: 1px solid var(--light-bg);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+        
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        nav a:hover, nav a.active {
+            color: var(--primary-color);
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: var(--transition);
+        }
+        
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .search-box {
+            display: flex;
+            background: var(--light-bg);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .search-box input {
+            background: transparent;
+            border: none;
+            padding: 10px 15px;
+            color: var(--text-color);
+            width: 200px;
+            outline: none;
+            font-size: 14px;
+        }
+        
+        .search-box input::placeholder {
+            color: #bbb;
+        }
+        
+        .search-box button {
+            background: var(--primary-color);
+            border: none;
+            padding: 10px 15px;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        
+        .search-box button:hover {
+            background: var(--secondary-color);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        
+        .btn-login {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-login:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-register {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-register:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Кнопка полноэкранного режима */
+        .btn-fullscreen {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 8px 12px;
+            border-radius: 50%;
+        }
+        
+        .btn-fullscreen:hover {
+            color: var(--primary-color);
+            background: rgba(255, 94, 0, 0.1);
+        }
+        
+        /* Главный баннер */
+        .hero {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .hero-banner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4);
+            z-index: -1;
+        }
+        
+        .hero-content {
+            padding: 40px;
+            max-width: 800px;
+        }
+        
+        .hero-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin: 0 auto 20px;
+            box-shadow: 0 0 20px rgba(255, 94, 0, 0.5);
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        
+        .hero-description {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .btn-play {
+            background: var(--primary-color);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+        
+        .btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 94, 0, 0.3);
+        }
+        
+        .btn-info {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 14px 30px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+        
+        .btn-info:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Секции с контентом */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0 20px;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sort-filter {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .sort-filter select {
+            background: var(--light-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .movie-card {
+            background: var(--medium-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .movie-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .movie-card:hover .movie-poster {
+            transform: scale(1.05);
+        }
+        
+        .movie-info {
+            padding: 15px;
+        }
+        
+        .movie-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 16px;
+        }
+        
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .movie-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .movie-duration {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .movie-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .movie-card:hover .movie-actions {
+            opacity: 1;
+        }
+        
+        .action-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .action-btn:hover {
+            background: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        /* Жанры фильма */
+        .movie-genres {
+            margin: 8px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .genre-tag {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Категории */
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0 40px;
+            overflow-x: auto;
+            padding: 10px 0;
+            scrollbar-width: thin;
+        }
+        
+        .categories::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .categories::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+        
+        .category-btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            background: var(--light-bg);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .category-btn.active, .category-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Видеоплеер */
+        .video-player {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .player-container {
+            width: 80%;
+            max-width: 900px;
+            background: var(--dark-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .player-container:fullscreen {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-container:-webkit-full-screen {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-container:-ms-fullscreen {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: var(--medium-bg);
+            border-bottom: 1px solid var(--light-bg);
+        }
+        
+        .player-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .close-player {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .close-player:hover {
+            color: var(--primary-color);
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: contain;
+        }
+        
+        .player-container:fullscreen .video-container {
+            flex: 1;
+            padding-bottom: 0;
+            height: 100%;
+        }
+        
+        .player-controls {
+            padding: 15px 20px;
+            background: var(--medium-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--light-bg);
+        }
+        
+        .quality-selector select {
+            background: var(--light-bg);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .watch-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .watch-btn {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .watch-btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .watch-btn-primary:hover {
+            background: var(--secondary-color);
+        }
+        
+        .watch-btn-secondary {
+            background: var(--light-bg);
+            color: white;
+        }
+        
+        .watch-btn-secondary:hover {
+            background: var(--primary-color);
+        }
+        
+        /* Похожие фильмы */
+        .similar-movies {
+            margin-top: 30px;
+            padding: 20px;
+            background: var(--medium-bg);
+            border-radius: 10px;
+        }
+        
+        .similar-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        /* Футер */
+        footer {
+            background: var(--medium-bg);
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary-color);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 15px;
+        }
+        
+        .footer-column a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-column p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: var(--transition);
+            font-size: 18px;
+        }
+        
+        .social-link:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-bg);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero {
+                height: 400px;
+            }
+            
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .player-container {
+                width: 95%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            
+            .hero {
+                height: 350px;
+            }
+            
+            .hero-content {
+                padding: 20px;
+            }
+            
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .user-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .player-controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            nav a {
+                font-size: 15px;
+            }
+            
+            .btn {
+                padding: 12px 18px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .movie-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero {
+                height: 300px;
+            }
+            
+            .hero-title {
+                font-size: 1.5rem;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+            }
+            
+            .btn-play, .btn-info {
+                justify-content: center;
+                width: 100%;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .player-container {
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .category-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* Загрузчик */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-bg);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Сообщение об ошибке */
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .error-message i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* Детали фильма */
+        .movie-details {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .details-container {
+            width: 80%;
+            max-width: 900px;
+            background: var(--dark-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .details-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .details-backdrop {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.4);
+        }
+        
+        .details-header-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .details-poster {
+            width: 150px;
+            height: 225px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .details-title-section {
+            flex: 1;
+        }
+        
+        .details-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            color: var(--text-color);
+        }
+        
+        .details-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .details-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        .details-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .details-content {
+            padding: 20px;
+        }
+        
+        .details-description {
+            margin-bottom: 20px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        
+        .details-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .details-close:hover {
+            background: var(--primary-color);
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--dark-bg);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+        
+        .modal-title {
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid var(--light-bg);
+            background: var(--medium-bg);
+            color: white;
+            transition: var(--transition);
+            font-size: 15px;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .form-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            font-size: 16px;
+        }
+        
+        .form-submit:hover {
+            background: var(--secondary-color);
+        }
+        
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+        
+        .form-footer a {
+            color: var(--primary-color);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        
+        .form-footer a:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Профиль пользователя */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .user-avatar:hover {
+            transform: scale(1.1);
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--text-color);
+        }
+        
+        .dropdown {
+            position: relative;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--medium-bg);
+            border-radius: 8px;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+        
+        .dropdown-item {
+            padding: 10px 15px;
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        
+        .dropdown-item:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+        }
+        
+        .dropdown-divider {
+            height: 1px;
+            background: var(--light-bg);
+            margin: 5px 0;
+        }
+        
+        .show {
+            display: block;
+        }
+        
+        /* Иконки статусов просмотра */
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            display: none;
+        }
+        
+        .status-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .status-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .status-btn:not(.active) {
+            background: var(--light-bg);
+            color: var(--text-secondary);
+        }
+        
+        .status-btn:not(.active):hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        /* Персональные рекомендации */
+        .personal-recommendations {
+            margin-top: 40px;
+        }
+
+        /* Выбор источника видео */
+        .source-selector {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            display: none;
+        }
+        
+        .source-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: var(--light-bg);
+            color: var(--text-secondary);
+        }
+        
+        .source-btn:hover, .source-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Полноэкранный режим */
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .fullscreen-btn:hover {
+            background: var(--primary-color);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Плавная прокрутка */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Улучшенная анимация появления элементов */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+        
+        /* Стили для полноэкранного режима сайта */
+        body:fullscreen {
+            overflow: auto;
+        }
+        
+        body:fullscreen header {
+            padding: 20px 0;
+        }
+        
+        body:fullscreen .container {
+            max-width: 95%;
+        }
+        
+        body:fullscreen .hero {
+            height: 60vh;
+        }
+        
+        /* Индикатор полноэкранного режима */
+        .fullscreen-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        /* Анимация для индикатора */
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Стили для комментариев */
+        .comments-section {
+            margin-top: 30px;
+        }
+        
+        .comments-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-color);
+        }
+        
+        .comment-form {
+            background: var(--medium-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--light-bg);
+            background: var(--dark-bg);
+            color: white;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+        
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .comment-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .comment-submit:hover {
+            background: var(--secondary-color);
+        }
+        
+        .comment-submit:disabled {
+            background: var(--light-bg);
+            cursor: not-allowed;
+        }
+        
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .comment-item {
+            background: var(--medium-bg);
+            padding: 15px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .comment-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .comment-text {
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: var(--text-color);
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .comment-action {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .comment-action:hover {
+            color: var(--primary-color);
+        }
+        
+        .comment-action.liked {
+            color: var(--primary-color);
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .admin-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: var(--transition);
+        }
+        
+        .btn-delete {
+            background: #ff4757;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background: #ff6b81;
+        }
+        
+        .btn-pin {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .btn-pin:hover {
+            background: #9b59b6;
+        }
+        
+        .pinned-comment {
+            border-left: 4px solid var(--primary-color);
+            background: linear-gradient(90deg, rgba(138, 43, 226, 0.1) 0%, rgba(26, 26, 26, 1) 30%);
+        }
+        
+        .pinned-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 10px;
+        }
+        
+        .login-to-comment {
+            text-align: center;
+            padding: 20px;
+            background: var(--medium-bg);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .login-to-comment p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Стили для модального окна профиля */
+        .profile-modal-content {
+            background: var(--dark-bg);
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+
+        .profile-info h2 {
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .profile-info p {
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .user-id {
+            background: var(--light-bg);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--light-bg);
+            padding-bottom: 10px;
+        }
+
+        .profile-tab {
+            padding: 10px 20px;
+            background: var(--light-bg);
+            border: none;
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .profile-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .profile-tab:hover:not(.active) {
+            background: var(--medium-bg);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .empty-list-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .empty-list-message i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--medium-bg);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Стили для тега администратора */
+        .admin-badge {
+            background: linear-gradient(45deg, var(--admin-color), #ff3366);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(255, 51, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
+        }
+
+        .admin-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--admin-color) !important;
+        }
+
+        .admin-section {
+            border-left: 3px solid var(--admin-color);
+            padding-left: 10px;
+            margin-top: 20px;
+            background: rgba(255, 51, 102, 0.05);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .admin-controls {
+            background: rgba(255, 51, 102, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        /* Стили для модерации комментариев */
+        .moderation-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--medium-bg);
+            border-radius: 10px;
+        }
+
+        .moderation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .moderation-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .moderation-filter {
+            padding: 8px 15px;
+            background: var(--light-bg);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .moderation-filter.active {
+            background: var(--admin-color);
+        }
+
+        .moderation-comments-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .moderation-comment {
+            background: var(--dark-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--light-bg);
+        }
+
+        .moderation-comment.pinned {
+            border-left-color: var(--primary-color);
+        }
+
+        .moderation-comment.reported {
+            border-left-color: #ff4757;
+        }
+
+        .moderation-comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .moderation-comment-movie {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .moderation-comment-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        /* Стили для рейтинга (звезд) */
+        .rating-stars {
+            display: flex;
+            gap: 2px;
+            margin-top: 5px;
+        }
+        
+        .rating-stars i {
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .rating-stars i.active {
+            color: gold;
+        }
+        
+        .rating-stars i:hover {
+            color: orange;
+        }
+        
+        .user-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .rating-value {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .favorite-btn.active i {
+            color: red !important;
+        }
+        
+        /* Стили для кнопок действий пользователя */
+        .user-action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .user-action-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .user-action-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .user-action-btn:not(.active) {
+            background: var(--light-bg);
+            color: var(--text-secondary);
+        }
+        
+        .user-action-btn:not(.active):hover {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Индикатор полноэкранного режима -->
+    <div class="fullscreen-indicator" id="fullscreenIndicator">
+        <i class="fas fa-expand"></i> Полноэкранный режим
+    </div>
+
+    <!-- Шапка -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon"><i class="fas fa-fire"></i></span>
+                    <span class="logo-text">Kitsunez</span>
+                </div>
+                
+                <nav>
+                    <ul>
+                        <li><a href="#" class="active" data-section="home"><i class="fas fa-home"></i> Главная</a></li>
+                        <li><a href="#" data-section="movies"><i class="fas fa-film"></i> Фильмы</a></li>
+                        <li><a href="#" data-section="series"><i class="fas fa-tv"></i> Сериалы</a></li>
+                        <li><a href="#" data-section="anime"><i class="fas fa-dragon"></i> Аниме</a></li>
+                        <li><a href="#" id="favoritesLink" data-section="favorites"><i class="fas fa-heart"></i> Избранное</a></li>
+                    </ul>
+                </nav>
+                
+                <div class="user-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Поиск..." id="searchInput">
+                        <button id="searchButton"><i class="fas fa-search"></i></button>
+                    </div>
+                    
+                    <!-- Кнопка полноэкранного режима для всего сайта -->
+                    <button class="btn-fullscreen" id="fullscreenButton" title="Полноэкранный режим">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                    
+                    <div class="auth-buttons" id="authButtons">
+                        <button class="btn btn-login" id="loginButton">Вход</button>
+                        <button class="btn btn-register" id="registerButton">Регистрация</button>
+                    </div>
+                    
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <div class="dropdown">
+                            <img src="https://i.ibb.co/Sht7vLz/favicon.png" alt="Аватар" class="user-avatar" id="userAvatar">
+                            <span class="user-name" id="userName">Пользователь</span>
+                            <div class="dropdown-menu" id="dropdownMenu">
+                                <a href="#" class="dropdown-item" id="profileLink"><i class="fas fa-user"></i> Профиль</a>
+                                <a href="#" class="dropdown-item" id="watchedLink"><i class="fas fa-check-circle"></i> Просмотрено</a>
+                                <a href="#" class="dropdown-item" id="watchlistLink"><i class="fas fa-bookmark"></i> Хочу посмотреть</a>
+                                <a href="#" class="dropdown-item" id="ratingsLink"><i class="fas fa-star"></i> Мои оценки</a>
+                                <div class="dropdown-divider" id="adminDivider" style="display: none;"></div>
+                                <a href="#" class="dropdown-item admin-menu-item" id="adminLink" style="display: none;">
+                                    <i class="fas fa-crown"></i> Панель администратора
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item" id="logoutButton"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Главный баннер -->
+    <section class="hero">
+        <img src="https://via.placeholder.com/1600x900/1a1a1a/ffffff?text=Kitsunez+Главный+Баннер" alt="Kitsunez" class="hero-banner">
+        <div class="hero-content">
+            <img src="https://i.ibb.co/Sht7vLz/favicon.png" alt="Kitsunez" class="hero-avatar">
+            <h1 class="hero-title">Добро пожаловать на Kitsunez</h1>
+            <p class="hero-description">Лучшая стриминговая платформа с огромной коллекцией фильмов, сериалов и аниме.</p>
+            <div class="hero-actions">
+                <button class="btn btn-play" id="startWatchingBtn">
+                    <i class="fas fa-play"></i> Начать просмотр
+                </button>
+                <button class="btn btn-info" id="moreInfoBtn">
+                    <i class="fas fa-info-circle"></i> Подробнее
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Основное содержимое -->
+    <main class="container">
+        <!-- Категории -->
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Все</button>
+            <button class="category-btn" data-category="feature">🎬 Полнометражные</button>
+            <button class="category-btn" data-category="short">🎥 Короткометражки</button>
+            <button class="category-btn" data-category="new">🔥 Новое</button>
+            <button class="category-btn" data-category="popular">⭐ Популярное</button>
+            <button class="category-btn" data-category="anime">🦊 Аниме</button>
+        </div>
+
+        <!-- Популярные фильмы -->
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-fire"></i> Популярные фильмы</h2>
+            <div class="sort-filter">
+                <select id="sortBy">
+                    <option value="date">По дате</option>
+                    <option value="rating">По рейтингу</option>
+                    <option value="duration">По длительности</option>
+                    <option value="views">По просмотрам</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="movie-grid" id="popularMovies">
+            <!-- Контент будет добавлен позже -->
+        </div>
+
+        <!-- Новинки -->
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-star"></i> Новинки</h2>
+        </div>
+        <div class="movie-grid" id="newMovies">
+            <!-- Контент будет добавлен позже -->
+        </div>
+
+        <!-- Рекомендации -->
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-thumbs-up"></i> Рекомендуем посмотреть</h2>
+        </div>
+        <div class="movie-grid" id="recommendedMovies">
+            <!-- Контент будет добавлен позже -->
+        </div>
+
+        <!-- Персональные рекомендации -->
+        <div class="section-header personal-recommendations" id="personalSection" style="display: none;">
+            <h2 class="section-title"><i class="fas fa-user"></i> Персональные рекомендации</h2>
+        </div>
+        <div class="movie-grid" id="personalMovies">
+            <!-- Контент будет добавлен позже -->
+        </div>
+
+        <!-- Секция администратора (только для админов) -->
+        <div class="admin-section" id="adminSection" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-crown"></i> Панель администратора</h2>
+            </div>
+            
+            <div class="admin-controls">
+                <h3>Управление контентом</h3>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button class="btn btn-register" id="addMovieBtn">
+                        <i class="fas fa-plus"></i> Добавить фильм
+                    </button>
+                    <button class="btn btn-login" id="manageUsersBtn">
+                        <i class="fas fa-users"></i> Управление пользователями
+                    </button>
+                    <button class="btn btn-login" id="moderateCommentsBtn">
+                        <i class="fas fa-comments"></i> Модерация комментариев
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h4>Статистика платформы</h4>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalMovies">0</div>
+                            <div class="stat-label">Всего фильмов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Всего пользователей</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalComments">0</div>
+                            <div class="stat-label">Всего комментариев</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Панель модерации комментариев -->
+                <div class="moderation-panel" id="moderationPanel" style="display: none;">
+                    <div class="moderation-header">
+                        <h3>Модерация комментариев</h3>
+                        <button class="btn btn-login" id="refreshCommentsBtn">
+                            <i class="fas fa-sync"></i> Обновить
+                        </button>
+                    </div>
+                    
+                    <div class="moderation-filters">
+                        <button class="moderation-filter active" data-filter="all">Все</button>
+                        <button class="moderation-filter" data-filter="reported">Жалобы</button>
+                        <button class="moderation-filter" data-filter="recent">Недавние</button>
+                    </div>
+                    
+                    <div class="moderation-comments-list" id="moderationCommentsList">
+                        <!-- Комментарии для модерации будут загружены здесь -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Wistia external script -->
+    <script src="https://fast.wistia.net/assets/external/E-v1.js" async></script>
+
+    <!-- Исправленный видеоплеер -->
+    <div id="videoPlayer" class="video-player">
+        <div class="player-container">
+            <div class="player-header">
+                <div class="player-title" id="playerTitle">Плеер</div>
+                <button class="close-player" id="closePlayerBtn" title="Закрыть плеер">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="video-container">
+                <iframe id="wistiaFrame" src="" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen 
+                        style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;">
+                </iframe>
+            </div>
+            <div class="player-controls">
+                <div class="quality-selector">
+                    <select>
+                        <option>Авто</option>
+                    </select>
+                </div>
+                <div class="watch-buttons">
+                    <button class="watch-btn watch-btn-secondary" id="playerFullscreenBtn" title="Во весь экран">
+                        <i class="fas fa-expand"></i> Полный экран
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Детали фильма -->
+    <div class="movie-details" id="movieDetails">
+        <div class="details-container">
+            <button class="details-close" id="closeDetailsBtn">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="details-header">
+                <img src="" alt="" class="details-backdrop" id="detailsBackdrop">
+                <div class="details-header-content">
+                    <img src="" alt="" class="details-poster" id="detailsPoster">
+                    <div class="details-title-section">
+                        <h2 class="details-title" id="detailsTitle"></h2>
+                        <div class="details-meta">
+                            <span class="details-meta-item" id="detailsYear"></span>
+                            <span class="details-meta-item" id="detailsDuration"></span>
+                            <span class="details-meta-item" id="detailsRating"></span>
+                            <span class="details-meta-item" id="detailsAgeRating"></span>
+                        </div>
+                        <div class="movie-genres" id="detailsGenres"></div>
+                        <div class="user-action-buttons">
+                            <button class="user-action-btn" id="detailsFavoriteBtn">
+                                <i class="fas fa-heart"></i> В избранное
+                            </button>
+                            <button class="user-action-btn" id="detailsWatchedBtn">
+                                <i class="fas fa-check-circle"></i> Просмотрено
+                            </button>
+                            <button class="user-action-btn" id="detailsWatchlistBtn">
+                                <i class="fas fa-bookmark"></i> Буду смотреть
+                            </button>
+                        </div>
+                        <div class="rating-stars" id="detailsRatingStars">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                        </div>
+                        <div class="details-actions">
+                            <button class="btn btn-play" id="detailsPlayBtn">
+                                <i class="fas fa-play"></i> Смотреть
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Встроенный плеер внутри деталей (сначала скрыт) -->
+            <div id="detailsPlayerWrap" class="video-container" style="display:none;margin:20px;padding-bottom:56.25%;position:relative;">
+                <iframe id="detailsPlayerFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"></iframe>
+            </div>
+            
+            <div class="details-content">
+                <h3>Описание</h3>
+                <p class="details-description" id="detailsDescription"></p>
+                
+                <!-- Секция комментариев -->
+                <div class="comments-section">
+                    <h3 class="comments-title"><i class="fas fa-comments"></i> Комментарии</h3>
+                    
+                    <div class="comment-form" id="commentForm" style="display: none;">
+                        <textarea id="commentText" placeholder="Оставьте ваш отзыв о фильме..." maxlength="1000"></textarea>
+                        <button class="comment-submit" id="submitComment">Отправить</button>
+                    </div>
+                    
+                    <div class="login-to-comment" id="loginToComment" style="display: none;">
+                        <p>Чтобы оставить комментарий, пожалуйста, войдите в систему</p>
+                        <button class="btn btn-login" id="loginToCommentBtn">Войти</button>
+                    </div>
+                    
+                    <div class="comments-list" id="commentsList">
+                        <!-- Комментарии будут загружаться здесь -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeLoginModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="modal-title">Вход в аккаунт</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Пароль</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="form-submit">Войти</button>
+            </form>
+            <div class="form-footer">
+                Нет аккаунта? <a id="showRegisterModalLink">Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div class="modal" id="registerModal">
+        <div class="modal-content">
+            <button class="modal-close" id="closeRegisterModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="modal-title">Регистрация аккаунта</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerName">Имя пользователя</label>
+                    <input type="text" id="registerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Пароль</label>
+                    <input type="password" id="registerPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Подтверждение пароля</label>
+                    <input type="password" id="registerConfirmPassword" required>
+                </div>
+                <button type="submit" class="form-submit">Зарегистрироваться</button>
+            </form>
+            <div class="form-footer">
+                Уже есть аккаунт? <a id="showLoginModalLink">Войти</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно профиля -->
+    <div class="modal" id="profileModal">
+        <div class="profile-modal-content">
+            <button class="modal-close" id="closeProfileModalBtn"><i class="fas fa-times"></i></button>
+            <h2 class="modal-title">Профиль пользователя</h2>
+            
+            <div class="profile-header">
+                <img src="https://i.ibb.co/Sht7vLz/favicon.png" alt="Аватар" class="profile-avatar" id="profileAvatar">
+                <div class="profile-info">
+                    <h2 id="profileUserName">Имя пользователя</h2>
+                    <p id="profileUserEmail">email@example.com</p>
+                    <div class="user-id" id="profileUserId">ID: user_123456789</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="favoritesCount">0</div>
+                    <div class="stat-label">В избранном</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="watchedCount">0</div>
+                    <div class="stat-label">Просмотрено</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="watchlistCount">0</div>
+                    <div class="stat-label">Буду смотреть</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="ratingsCount">0</div>
+                    <div class="stat-label">Оценок поставлено</div>
+                </div>
+            </div>
+
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-tab="favorites">Избранное</button>
+                <button class="profile-tab" data-tab="watched">Просмотрено</button>
+                <button class="profile-tab" data-tab="watchlist">Хочу посмотреть</button>
+                <button class="profile-tab" data-tab="ratings">Мои оценки</button>
+            </div>
+
+            <div class="tab-content active" id="favoritesTab">
+                <div class="movie-grid" id="profileFavoritesList">
+                    <!-- Избранные фильмы будут загружены динамически -->
+                </div>
+            </div>
+
+            <div class="tab-content" id="watchedTab">
+                <div class="movie-grid" id="profileWatchedList">
+                    <!-- Просмотренные фильмы будут загружены динамически -->
+                </div>
+            </div>
+
+            <div class="tab-content" id="watchlistTab">
+                <div class="movie-grid" id="profileWatchlistList">
+                    <!-- Фильмы для просмотра будут загружены динамически -->
+                </div>
+            </div>
+
+            <div class="tab-content" id="ratingsTab">
+                <div class="movie-grid" id="profileRatingsList">
+                    <!-- Фильмы с оценками будут загружены динамически -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Футер -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>О Kitsunez</h3>
+                    <p>Kitsunez — это современная стриминговая платформа с огромной коллекцией фильмов, сериалов и аниме. Мы предлагаем высокое качество видео и удобный интерфейс.</p>
+                    <div class="social-links">
+                        <a href="https://t.me/kitsunezwatch" class="social-link" target="_blank"><i class="fab fa-telegram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Разделы</h3>
+                    <ul>
+                        <li><a href="#" data-section="movies">Фильмы</a></li>
+                        <li><a href="#" data-section="series">Сериалы</a></li>
+                        <li><a href="#" data-section="anime">Аниме</a></li>
+                        <li><a href="#" data-section="new">Новинки</a></li>
+                        <li><a href="#" data-section="popular">Топ-250</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 Kitsunez. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Конфигурация
+        const API_KEY = 'YOUR_YOUTUBE_API_KEY';
+        const EXCLUDED_KEYWORDS = ['trailer', 'teaser', 'обзор', 'clip', 'promo', 'трейлер', 'тизер'];
+        const INCLUDED_KEYWORDS = ['full movie', 'фильм', 'movie', 'short film', 'короткометражка', 'полный фильм'];
+        
+        // Данные фильмов
+        const moviesData = [
+            {
+                title: "Оглянись - аниме фильм",
+                poster: "https://images.kinorium.com/movie/shot/11159722/h280_54330844.jpg?21743992669",
+                backdrop: "https://images.kinorium.com/movie/slot/11159722/w1920_54330844.jpg?21743992669",
+                googleDriveId: "1dzAHF1MtFV72yhUxKxlShTGqM0JqowDd",
+                duration: 58.21,
+                year: 2024,
+                rating: 8.6,
+                views: 1500000,
+                category: "anime",
+                ageRating: "16+",
+                genres: ["#drama", "#syonen"],
+                description: "Фудзино — молодая художница с непреходящей страстью к рисованию. Она может часами сидеть за столом, воплощая в манге свои фантазии. Её способности поражают: в её возрасте такой мастерски отображенной точности добиться нелегко, и именно благодаря этому её работы быстро завоевывают популярность. Она привлекает к себе внимание восхищенных одноклассников, которые восхищаются её усердием.\n\nЕё таланту восторгается и учитель, однако он также обращает внимание на другую ученицу, Кемото, которая не ходит в школу. Кемото, как и Фудзино, увлечена созданием манги, хотя и полностью посвящает себя работе над школьной газетой. Е её иллюстрации могут попасть в издание только по одному варианту, добавляя предмет для соперничества между девочками.\n\nЧувствуя начало соперничества, Фудзино стремится превзойти Кемото и не желае делиться своими успехами. Учитель, распознавая этот конфликт, решает организовать встречу девочек с целью объединить их таланты в общем проекте. Он надеется, что сотрудничество превратит их в лучших подруг и позволит создать что-то поистине уникальное. Ожидает ли Фудзино и Кемото творческое сотрудничество или они продолжат соперничать, стоит увидеть. Но перед ними определенно открываются перспективы для вдохновляющих и необычных изданий."
+            }
+        ];
+
+        // Система пользователей
+        let currentUser = null;
+        let users = JSON.parse(localStorage.getItem('kitsunez_users')) || [];
+        let currentSection = 'home';
+        
+        // Система комментариев
+        let comments = JSON.parse(localStorage.getItem('kitsunez_comments')) || [];
+        let currentMovieId = null;
+
+        // ID администратора
+        const ADMIN_USER_ID = '1758400830708';
+
+        // Функции для работы с полноэкранным режимом
+        function toggleFullscreenSite() {
+            const fullscreenButton = document.getElementById('fullscreenButton');
+            const icon = fullscreenButton.querySelector('i');
+            
+            if (!document.fullscreenElement) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+                
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+                
+                showFullscreenIndicator();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        }
+        
+        function showFullscreenIndicator() {
+            const indicator = document.getElementById('fullscreenIndicator');
+            indicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                indicator.style.animation = 'fadeOut 1s forwards';
+                
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                    indicator.style.animation = '';
+                }, 1000);
+            }, 2000);
+        }
+        
+        function handleFullscreenChange() {
+            const fullscreenButton = document.getElementById('fullscreenButton');
+            const icon = fullscreenButton.querySelector('i');
+            
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        }
+        
+        // Функции для работы с пользователями
+        function registerUser(name, email, password) {
+            if (users.find(user => user.email === email)) {
+                alert('Пользователь с таким email уже существует');
+                return false;
+            }
+            
+            if (users.find(user => user.name === name)) {
+                alert('Пользователь с таким именем уже существует');
+                return false;
+            }
+            
+            // Создаем уникальный ID для пользователя
+            const userId = generateUserId();
+            
+            // Проверяем, является ли пользователь специальным администратором
+            const isAdminUser = email.toLowerCase() === 'glebmalashkov@gmail.com' || userId === ADMIN_USER_ID;
+            
+            const newUser = {
+                id: userId,
+                name,
+                email,
+                password,
+                isAdmin: isAdminUser,
+                favorites: [],
+                watched: [],
+                watchlist: [],
+                ratings: {}, // Новое поле для оценок
+                preferences: {
+                    genres: [],
+                    minRating: 0
+                }
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('kitsunez_users', JSON.stringify(users));
+            
+            loginUser(email, password);
+            
+            return true;
+        }
+        
+        function generateUserId() {
+            return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        function loginUser(email, password) {
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                // Инициализируем ratings, если их нет
+                if (!currentUser.ratings) {
+                    currentUser.ratings = {};
+                }
+                localStorage.setItem('kitsunez_current_user', JSON.stringify(user));
+                updateUIForUser();
+                closeModal('loginModal');
+                return true;
+            } else {
+                alert('Неверный email или пароль');
+                return false;
+            }
+        }
+        
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('kitsunez_current_user');
+            updateUIForUser();
+        }
+        
+        function updateUIForUser() {
+            const authButtons = document.getElementById('authButtons');
+            const userProfile = document.getElementById('userProfile');
+            const adminSection = document.getElementById('adminSection');
+            const adminLink = document.getElementById('adminLink');
+            const adminDivider = document.getElementById('adminDivider');
+            
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                // Обновляем имя пользователя с учетом админского статуса
+                const userNameElement = document.getElementById('userName');
+                userNameElement.innerHTML = '';
+                userNameElement.appendChild(document.createTextNode(currentUser.name));
+                
+                if (currentUser.isAdmin) {
+                    const adminBadge = document.createElement('span');
+                    adminBadge.className = 'admin-badge';
+                    adminBadge.innerHTML = '<i class="fas fa-crown"></i> АДМИН';
+                    userNameElement.appendChild(adminBadge);
+                    
+                    // Показываем админскую секцию и пункт меню
+                    adminSection.style.display = 'block';
+                    adminLink.style.display = 'block';
+                    adminDivider.style.display = 'block';
+                    
+                    // Обновляем статистику для админ-панели
+                    updateAdminStats();
+                } else {
+                    adminSection.style.display = 'none';
+                    adminLink.style.display = 'none';
+                    adminDivider.style.display = 'none';
+                }
+                
+                document.getElementById('personalSection').style.display = 'flex';
+                loadPersonalRecommendations();
+            } else {
+                authButtons.style.display = 'flex';
+                userProfile.style.display = 'none';
+                adminSection.style.display = 'none';
+                document.getElementById('personalSection').style.display = 'none';
+            }
+        }
+        
+        function updateAdminStats() {
+            document.getElementById('totalMovies').textContent = moviesData.length;
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalComments').textContent = comments.length;
+        }
+        
+        function updateMovieStatus(movieId, status, add) {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            const statusMap = {
+                'favorite': 'favorites',
+                'watched': 'watched',
+                'watchlist': 'watchlist'
+            };
+            
+            const listName = statusMap[status];
+            
+            if (add) {
+                if (!currentUser[listName].includes(movieId)) {
+                    currentUser[listName].push(movieId);
+                }
+            } else {
+                currentUser[listName] = currentUser[listName].filter(id => id !== movieId);
+            }
+            
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = currentUser;
+                localStorage.setItem('kitsunez_users', JSON.stringify(users));
+                localStorage.setItem('kitsunez_current_user', JSON.stringify(currentUser));
+            }
+        
+            // Обновляем UI сразу после изменения списка
+            try {
+                updateUIForUser();
+            } catch(e){ console.warn('updateUIForUser error:', e); }
+            
+            // Если открыт раздел Избранное — обновим отображение
+            try {
+                if (typeof currentSection !== 'undefined' && currentSection === 'favorites') {
+                    handleFavoritesClick({preventDefault: () => {}});
+                }
+            } catch(e){ console.warn('refresh favorites error:', e); }
+            
+            // Если открыт профиль — обновим вкладку избранного
+            try {
+                const pm = document.getElementById('profileModal');
+                if (pm && pm.style.display === 'flex') {
+                    loadProfileMovies('favorites');
+                }
+            } catch(e){ console.warn('loadProfileMovies error:', e); }
+        }
+        
+        // Функция для обновления оценки фильма
+        function updateMovieRating(movieId, rating) {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            if (!currentUser.ratings) {
+                currentUser.ratings = {};
+            }
+            
+            currentUser.ratings[movieId] = rating;
+            
+            // Сохраняем в общем списке пользователей
+            const userIndex = users.findIndex(u => u.id === currentUser.id);
+            if (userIndex !== -1) {
+                users[userIndex] = currentUser;
+                localStorage.setItem('kitsunez_users', JSON.stringify(users));
+                localStorage.setItem('kitsunez_current_user', JSON.stringify(currentUser));
+            }
+            
+            // Обновляем UI
+            updateUIForUser();
+        }
+        
+        // Функция для получения оценки пользователя для фильма
+        function getUserRating(movieId) {
+            if (!currentUser || !currentUser.ratings) return 0;
+            return currentUser.ratings[movieId] || 0;
+        }
+        
+        // Функция для получения среднего рейтинга фильма
+        function getAverageRating(movieId) {
+            let total = 0;
+            let count = 0;
+            
+            users.forEach(user => {
+                if (user.ratings && user.ratings[movieId]) {
+                    total += user.ratings[movieId];
+                    count++;
+                }
+            });
+            
+            return count > 0 ? (total / count).toFixed(1) : 0;
+        }
+        
+        function loadPersonalRecommendations() {
+            if (!currentUser) return;
+            
+            const personalMovies = moviesData.filter(movie => {
+                if (currentUser.favorites.length > 0) {
+                    const favoriteMovie = moviesData.find(m => m.googleDriveId === currentUser.favorites[0]);
+                    if (favoriteMovie && movie.genres.some(genre => favoriteMovie.genres.includes(genre))) {
+                        return true;
+                    }
+                }
+                
+                return movie.rating >= 8.0;
+            });
+            
+            renderMovies(personalMovies, 'personalMovies');
+        }
+        
+        function showLoginModal() {
+            closeModal('registerModal');
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        function showRegisterModal() {
+            closeModal('loginModal');
+            document.getElementById('registerModal').style.display = 'flex';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Функции для видеоплеера
+        function openPlayer(title, googleDriveId, duration) {
+            const player = document.getElementById('videoPlayer');
+            const playerTitle = document.getElementById('playerTitle');
+            const playerFrame = document.getElementById('wistiaFrame');
+
+            playerTitle.textContent = title;
+
+            // Используем Wistia-канал как было раньше
+            const wistiaUrl = "https://fast.wistia.net/embed/channel/11fu58s4dv?wchannelid=11fu58s4dv&wmediaid=ul4a4br5ck";
+            if (playerFrame) {
+                playerFrame.src = wistiaUrl;
+            }
+
+            player.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            try {
+                loadSimilarMovies(googleDriveId);
+            } catch (e) {
+                console.warn('loadSimilarMovies error:', e);
+            }
+
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                try {
+                    updateMovieStatus(googleDriveId, 'watched', true);
+                } catch (e) {
+                    console.warn('updateMovieStatus error:', e);
+                }
+            }
+        }
+
+        function closePlayer() {
+            const player = document.getElementById('videoPlayer');
+            const playerFrame = document.getElementById('wistiaFrame');
+
+            if (player) {
+                player.style.display = 'none';
+            }
+            if (playerFrame) {
+                try { 
+                    // Останавливаем видео
+                    playerFrame.src = playerFrame.src;
+                } catch (e) { 
+                    console.warn(e); 
+                }
+            }
+            document.body.style.overflow = 'auto';
+
+            // Выходим из полноэкранного режима если активен
+            if (document.fullscreenElement) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        function toggleFullScreen() {
+            const playerContainer = document.querySelector('.player-container');
+            const fullscreenBtn = document.getElementById('playerFullscreenBtn');
+            const icon = fullscreenBtn.querySelector('i');
+            
+            if (!document.fullscreenElement) {
+                if (playerContainer.requestFullscreen) {
+                    playerContainer.requestFullscreen();
+                } else if (playerContainer.webkitRequestFullscreen) {
+                    playerContainer.webkitRequestFullscreen();
+                } else if (playerContainer.msRequestFullscreen) {
+                    playerContainer.msRequestFullscreen();
+                }
+                
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        }
+
+        function handlePlayerFullScreenChange() {
+            const fullscreenBtn = document.getElementById('playerFullscreenBtn');
+            const icon = fullscreenBtn.querySelector('i');
+            
+            if (document.fullscreenElement) {
+                icon.classList.remove('fa-expand');
+                icon.classList.add('fa-compress');
+            } else {
+                icon.classList.remove('fa-compress');
+                icon.classList.add('fa-expand');
+            }
+        }
+
+        // Функции для деталей фильма
+        function openMovieDetails(movie) {
+            const details = document.getElementById('movieDetails');
+            const backdrop = document.getElementById('detailsBackdrop');
+            const poster = document.getElementById('detailsPoster');
+            const title = document.getElementById('detailsTitle');
+            const year = document.getElementById('detailsYear');
+            const duration = document.getElementById('detailsDuration');
+            const rating = document.getElementById('detailsRating');
+            const ageRating = document.getElementById('detailsAgeRating');
+            const genres = document.getElementById('detailsGenres');
+            const description = document.getElementById('detailsDescription');
+            const playBtn = document.getElementById('detailsPlayBtn');
+            
+            backdrop.src = movie.backdrop || movie.poster;
+            poster.src = movie.poster;
+            title.textContent = movie.title;
+            year.textContent = movie.year;
+            
+            if (typeof movie.duration === 'string') {
+                duration.textContent = movie.duration;
+            } else {
+                const hours = Math.floor(movie.duration / 60);
+                const minutes = Math.floor(movie.duration % 60);
+                duration.textContent = hours > 0 ? `${hours}ч ${minutes}м` : `${minutes}м`;
+            }
+            
+            rating.innerHTML = `<i class="fas fa-star"></i> ${getAverageRating(movie.googleDriveId)}`;
+            ageRating.textContent = movie.ageRating;
+            
+            genres.innerHTML = '';
+            if (movie.genres && movie.genres.length) {
+                movie.genres.forEach(genre => {
+                    const genreSpan = document.createElement('span');
+                    genreSpan.className = 'genre-tag';
+                    genreSpan.textContent = genre;
+                    genres.appendChild(genreSpan);
+                });
+            }
+            
+            description.textContent = movie.description;
+            
+            // Обновляем кнопки статусов
+            updateDetailsButtons(movie.googleDriveId);
+            
+            // Обновляем звезды рейтинга
+            updateDetailsRatingStars(movie.googleDriveId);
+            
+            playBtn.onclick = () => {
+                closeMovieDetails();
+                openPlayer(movie.title, movie.googleDriveId, movie.duration);
+            };
+            
+            // Загружаем комментарии для этого фильма
+            currentMovieId = movie.googleDriveId;
+            loadComments(currentMovieId);
+            
+            // Показываем/скрываем форму комментариев в зависимости от авторизации
+            const commentForm = document.getElementById('commentForm');
+            const loginToComment = document.getElementById('loginToComment');
+            
+            if (currentUser) {
+                commentForm.style.display = 'block';
+                loginToComment.style.display = 'none';
+            } else {
+                commentForm.style.display = 'none';
+                loginToComment.style.display = 'block';
+            }
+            
+            // Установим поведение кнопки "Смотреть" в деталях
+            if (playBtn) {
+                playBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    const dp = document.getElementById('detailsPlayerWrap');
+                    const df = document.getElementById('detailsPlayerFrame');
+                    const wistiaUrl = "https://fast.wistia.net/embed/channel/11fu58s4dv?wchannelid=11fu58s4dv&wmediaid=ul4a4br5ck";
+                    if (df) df.src = wistiaUrl;
+                    if (dp) dp.style.display = 'block';
+                    // прокрутить к плееру внутри модалки
+                    setTimeout(() => {
+                        dp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 200);
+                };
+            }
+            details.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Обновление кнопок статусов в деталях фильма
+        function updateDetailsButtons(movieId) {
+            if (!currentUser) return;
+            
+            const favoriteBtn = document.getElementById('detailsFavoriteBtn');
+            const watchedBtn = document.getElementById('detailsWatchedBtn');
+            const watchlistBtn = document.getElementById('detailsWatchlistBtn');
+            
+            // Сбрасываем активные классы
+            favoriteBtn.classList.remove('active');
+            watchedBtn.classList.remove('active');
+            watchlistBtn.classList.remove('active');
+            
+            // Устанавливаем активные классы в зависимости от статуса
+            if (currentUser.favorites.includes(movieId)) {
+                favoriteBtn.classList.add('active');
+            }
+            if (currentUser.watched.includes(movieId)) {
+                watchedBtn.classList.add('active');
+            }
+            if (currentUser.watchlist.includes(movieId)) {
+                watchlistBtn.classList.add('active');
+            }
+            
+            // Добавляем обработчики событий
+            favoriteBtn.onclick = () => {
+                const isFavorite = currentUser.favorites.includes(movieId);
+                updateMovieStatus(movieId, 'favorite', !isFavorite);
+                updateDetailsButtons(movieId);
+            };
+            
+            watchedBtn.onclick = () => {
+                const isWatched = currentUser.watched.includes(movieId);
+                updateMovieStatus(movieId, 'watched', !isWatched);
+                updateDetailsButtons(movieId);
+            };
+            
+            watchlistBtn.onclick = () => {
+                const inWatchlist = currentUser.watchlist.includes(movieId);
+                updateMovieStatus(movieId, 'watchlist', !inWatchlist);
+                updateDetailsButtons(movieId);
+            };
+        }
+        
+        // Обновление звезд рейтинга в деталях фильма
+        function updateDetailsRatingStars(movieId) {
+            const ratingStars = document.getElementById('detailsRatingStars');
+            const stars = ratingStars.querySelectorAll('.fa-star');
+            const userRating = getUserRating(movieId);
+            
+            // Сбрасываем активные классы
+            stars.forEach(star => {
+                star.classList.remove('active');
+            });
+            
+            // Устанавливаем активные классы в зависимости от оценки пользователя
+            stars.forEach(star => {
+                const ratingValue = parseInt(star.getAttribute('data-rating'));
+                if (ratingValue <= userRating) {
+                    star.classList.add('active');
+                }
+            });
+            
+            // Добавляем обработчики событий
+            stars.forEach(star => {
+                star.onclick = () => {
+                    if (!currentUser) {
+                        showLoginModal();
+                        return;
+                    }
+                    
+                    const ratingValue = parseInt(star.getAttribute('data-rating'));
+                    updateMovieRating(movieId, ratingValue);
+                    updateDetailsRatingStars(movieId);
+                };
+            });
+        }
+        
+        function closeMovieDetails() {
+            const details = document.getElementById('movieDetails');
+            details.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            currentMovieId = null;
+        }
+        
+        // Загрузка похожих фильмов
+        function loadSimilarMovies(currentGoogleDriveId) {
+            const similarContainer = document.getElementById('similarMovies');
+            similarContainer.innerHTML = '';
+            
+            const similarMovies = moviesData
+                .filter(movie => movie.googleDriveId !== currentGoogleDriveId)
+                .slice(0, 4);
+            
+            similarMovies.forEach(movie => {
+                const similarMovieElement = document.createElement('div');
+                similarMovieElement.className = 'movie-card';
+                similarMovieElement.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                    </div>
+                `;
+                
+                similarMovieElement.addEventListener('click', () => {
+                    openPlayer(movie.title, movie.googleDriveId, movie.duration);
+                });
+                
+                similarContainer.appendChild(similarMovieElement);
+            });
+        }
+        
+        // Отображение фильмов в сетке
+        function renderMovies(movies, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (movies.length === 0) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-film"></i>
+                        <p>Фильмы не найдены</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            movies.forEach(movie => {
+                let durationText;
+                if (typeof movie.duration === 'string') {
+                    durationText = movie.duration;
+                } else {
+                    const hours = Math.floor(movie.duration / 60);
+                    const minutes = Math.floor(movie.duration % 60);
+                    durationText = hours > 0 ? `${hours}ч ${minutes}м` : `${minutes}м`;
+                }
+                
+                const movieElement = document.createElement('div');
+                movieElement.className = 'movie-card fade-in';
+                movieElement.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-actions">
+                        <button class="action-btn play-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        
+                        <button class="action-btn favorite-btn">
+                            <i class="fas fa-heart"></i>
+                        </button>
+    
+                        <button class="action-btn info-btn">
+                            <i class="fas fa-info"></i>
+                        </button>
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        ${movie.genres && movie.genres.length ? `
+                        <div class="movie-genres">
+                            ${movie.genres.map(genre => `<span class="genre-tag">${genre}</span>`).join('')}
+                        </div>
+                        ` : ''}
+                        <div class="movie-meta">
+                            <span>${movie.year}${movie.ageRating ? ` (${movie.ageRating})` : ''}</span>
+                            <div>
+                                <span class="movie-duration"><i class="fas fa-clock"></i> ${durationText}</span>
+                                <span class="movie-rating"><i class="fas fa-star"></i> ${getAverageRating(movie.googleDriveId)}</span>
+                            </div>
+                        </div>
+                        <!-- Звезды для оценки -->
+                        <div class="rating-stars" data-movie-id="${movie.googleDriveId}">
+                            ${[1, 2, 3, 4, 5].map(star => `
+                                <i class="fas fa-star ${getUserRating(movie.googleDriveId) >= star ? 'active' : ''}" 
+                                   data-rating="${star}"></i>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                movieElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.movie-actions') && !e.target.closest('.rating-stars')) {
+                        openMovieDetails(movie);
+                    }
+                });
+                
+                const playBtn = movieElement.querySelector('.play-btn');
+                playBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openPlayer(movie.title, movie.googleDriveId, movie.duration);
+                });
+                
+                const favBtn = movieElement.querySelector('.favorite-btn');
+                if (currentUser && currentUser.favorites.includes(movie.googleDriveId)) {
+                    favBtn.classList.add('active');
+                }
+                favBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!currentUser) {
+                        showLoginModal();
+                        return;
+                    }
+                    const isFavorite = currentUser.favorites.includes(movie.googleDriveId);
+                    updateMovieStatus(movie.googleDriveId, 'favorite', !isFavorite);
+                    if (isFavorite) {
+                        favBtn.classList.remove('active');
+                    } else {
+                        favBtn.classList.add('active');
+                    }
+                });
+                
+                const infoBtn = movieElement.querySelector('.info-btn');
+                infoBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openMovieDetails(movie);
+                });
+                
+                // Обработчик для звезд рейтинга
+                const starsContainer = movieElement.querySelector('.rating-stars');
+                starsContainer.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (e.target.classList.contains('fa-star')) {
+                        const rating = parseInt(e.target.getAttribute('data-rating'));
+                        updateMovieRating(movie.googleDriveId, rating);
+                        
+                        // Обновляем отображение звезд
+                        starsContainer.querySelectorAll('.fa-star').forEach((star, index) => {
+                            if (index < rating) {
+                                star.classList.add('active');
+                            } else {
+                                star.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+                
+                container.appendChild(movieElement);
+            });
+        }
+        
+        // Фильтрация фильмов по категории
+        function filterMoviesByCategory(category) {
+            if (category === 'all') {
+                return moviesData;
+            }
+            
+            return moviesData.filter(movie => {
+                if (category === 'new') {
+                    return movie.year >= 2020;
+                } else if (category === 'popular') {
+                    return movie.views > 10000000;
+                } else if (category === 'anime') {
+                    return movie.category === 'anime';
+                } else {
+                    return movie.category === category;
+                }
+            });
+        }
+        
+        // Сортировка фильмов
+        function sortMovies(movies, criteria) {
+            return [...movies].sort((a, b) => {
+                if (criteria === 'date') {
+                    return b.year - a.year;
+                } else if (criteria === 'rating') {
+                    return b.rating - a.rating;
+                } else if (criteria === 'duration') {
+                    return b.duration - a.duration;
+                } else if (criteria === 'views') {
+                    return b.views - a.views;
+                }
+                return 0;
+            });
+        }
+        
+        // Поиск фильмов
+        function searchMovies(query) {
+            if (!query.trim()) {
+                return moviesData;
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            return moviesData.filter(movie => 
+                movie.title.toLowerCase().includes(lowerQuery) || 
+                movie.description.toLowerCase().includes(lowerQuery)
+            );
+        }
+        
+        // Обработчик клика на избранное
+        function handleFavoritesClick(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            const favoriteMovies = moviesData.filter(movie => 
+                currentUser.favorites.includes(movie.googleDriveId)
+            );
+            
+            renderMovies(favoriteMovies, 'popularMovies');
+            document.querySelector('.section-title').innerHTML = `<i class="fas fa-heart"></i> Избранное`;
+        }
+        
+        // Обработчик клика на оценки
+        function handleRatingsClick(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            const ratedMovies = moviesData.filter(movie => 
+                currentUser.ratings && currentUser.ratings[movie.googleDriveId]
+            );
+            
+            renderMovies(ratedMovies, 'popularMovies');
+            document.querySelector('.section-title').innerHTML = `<i class="fas fa-star"></i> Мои оценки`;
+        }
+        
+        // Переключение разделов
+        function switchSection(section) {
+            currentSection = section;
+            
+            document.querySelectorAll('nav a').forEach(link => {
+                if (link.dataset.section === section) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            if (section === 'home') {
+                renderMovies(moviesData, 'popularMovies');
+                renderMovies(moviesData.filter(movie => movie.year >= 2023), 'newMovies');
+                renderMovies(moviesData.filter(movie => movie.rating >= 8.0), 'recommendedMovies');
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-fire"></i> Популярные фильмы`;
+            } else if (section === 'favorites') {
+                handleFavoritesClick({preventDefault: () => {}});
+            } else if (section === 'ratings') {
+                handleRatingsClick({preventDefault: () => {}});
+            } else {
+                const filteredMovies = moviesData.filter(movie => movie.category === section);
+                renderMovies(filteredMovies, 'popularMovies');
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-film"></i> ${section.charAt(0).toUpperCase() + section.slice(1)}`;
+            }
+        }
+        
+        // Функции для работы с комментариями
+        function addComment(movieId, text) {
+            if (!currentUser || !text.trim()) return false;
+            
+            const newComment = {
+                id: 'comment_' + Date.now(),
+                movieId: movieId,
+                userId: currentUser.id,
+                userName: currentUser.name,
+                text: text.trim(),
+                timestamp: Date.now(),
+                likes: [],
+                pinned: false,
+                reports: []
+            };
+            
+            comments.push(newComment);
+            localStorage.setItem('kitsunez_comments', JSON.stringify(comments));
+            
+            return true;
+        }
+        
+        function deleteComment(commentId) {
+            const commentIndex = comments.findIndex(c => c.id === commentId);
+            
+            if (commentIndex === -1) return false;
+            
+            const comment = comments[commentIndex];
+            
+            // Проверяем права: только администратор или автор может удалять
+            if (currentUser && (currentUser.isAdmin || currentUser.id === comment.userId)) {
+                comments.splice(commentIndex, 1);
+                localStorage.setItem('kitsunez_comments', JSON.stringify(comments));
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function toggleLikeComment(commentId) {
+            if (!currentUser) return false;
+            
+            const comment = comments.find(c => c.id === commentId);
+            
+            if (!comment) return false;
+            
+            const likeIndex = comment.likes.indexOf(currentUser.id);
+            
+            if (likeIndex === -1) {
+                comment.likes.push(currentUser.id);
+            } else {
+                comment.likes.splice(likeIndex, 1);
+            }
+            
+            localStorage.setItem('kitsunez_comments', JSON.stringify(comments));
+            return true;
+        }
+        
+        function togglePinComment(commentId) {
+            if (!currentUser || !currentUser.isAdmin) return false;
+            
+            const comment = comments.find(c => c.id === commentId);
+            
+            if (!comment) return false;
+            
+            comment.pinned = !comment.pinned;
+            localStorage.setItem('kitsunez_comments', JSON.stringify(comments));
+            return true;
+        }
+        
+        function reportComment(commentId) {
+            if (!currentUser) return false;
+            
+            const comment = comments.find(c => c.id === commentId);
+            
+            if (!comment) return false;
+            
+            // Проверяем, жаловался ли уже пользователь на этот комментарий
+            if (!comment.reports.includes(currentUser.id)) {
+                comment.reports.push(currentUser.id);
+                localStorage.setItem('kitsunez_comments', JSON.stringify(comments));
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function loadComments(movieId) {
+            const commentsList = document.getElementById('commentsList');
+            commentsList.innerHTML = '';
+            
+            const movieComments = comments
+                .filter(comment => comment.movieId === movieId)
+                .sort((a, b) => {
+                    // Сначала закрепленные, потом по времени (новые сверху)
+                    if (a.pinned && !b.pinned) return -1;
+                    if (!a.pinned && b.pinned) return 1;
+                    return b.timestamp - a.timestamp;
+                });
+            
+            if (movieComments.length === 0) {
+                commentsList.innerHTML = '<p class="text-center">Пока нет комментариев. Будьте первым!</p>';
+                return;
+            }
+            
+            movieComments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = `comment-item ${comment.pinned ? 'pinned-comment' : ''}`;
+                
+                const isLiked = currentUser && comment.likes.includes(currentUser.id);
+                const isAuthor = currentUser && currentUser.id === comment.userId;
+                const isAdmin = currentUser && currentUser.isAdmin;
+                const isReported = currentUser && comment.reports.includes(currentUser.id);
+                
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">
+                            ${comment.userName}
+                            ${comment.pinned ? '<span class="pinned-badge">Закреплен</span>' : ''}
+                        </span>
+                        <span class="comment-date">${new Date(comment.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-actions">
+                        <button class="comment-action ${isLiked ? 'liked' : ''}" data-comment-id="${comment.id}" data-action="like">
+                            <i class="fas fa-heart"></i> <span>${comment.likes.length}</span>
+                        </button>
+                        ${!isAuthor ? `
+                        <button class="comment-action ${isReported ? 'reported' : ''}" data-comment-id="${comment.id}" data-action="report">
+                            <i class="fas fa-flag"></i> <span>${comment.reports.length}</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                    ${(isAdmin || isAuthor) ? `
+                    <div class="admin-actions">
+                        ${isAdmin ? `
+                        <button class="admin-btn btn-pin" data-comment-id="${comment.id}" data-action="pin">
+                            ${comment.pinned ? 'Открепить' : 'Закрепить'}
+                        </button>
+                        ` : ''}
+                        <button class="admin-btn btn-delete" data-comment-id="${comment.id}" data-action="delete">
+                            Удалить
+                        </button>
+                    </div>
+                    ` : ''}
+                `;
+                
+                commentsList.appendChild(commentElement);
+            });
+            
+            // Добавляем обработчики событий для кнопок комментариев
+            commentsList.querySelectorAll('[data-action="like"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (toggleLikeComment(commentId)) {
+                        loadComments(movieId);
+                    } else if (!currentUser) {
+                        showLoginModal();
+                    }
+                });
+            });
+            
+            commentsList.querySelectorAll('[data-action="report"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (reportComment(commentId)) {
+                        loadComments(movieId);
+                    } else if (!currentUser) {
+                        showLoginModal();
+                    }
+                });
+            });
+            
+            commentsList.querySelectorAll('[data-action="delete"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (deleteComment(commentId)) {
+                        loadComments(movieId);
+                    }
+                });
+            });
+            
+            commentsList.querySelectorAll('[data-action="pin"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (togglePinComment(commentId)) {
+                        loadComments(movieId);
+                    }
+                });
+            });
+        }
+        
+        // Функции для профиля пользователя
+        function showProfileModal() {
+            if (!currentUser) {
+                showLoginModal();
+                return;
+            }
+            
+            // Заполняем информацию о пользователе
+            const profileUserNameElement = document.getElementById('profileUserName');
+            profileUserNameElement.innerHTML = '';
+            profileUserNameElement.appendChild(document.createTextNode(currentUser.name));
+            
+            if (currentUser.isAdmin) {
+                const adminBadge = document.createElement('span');
+                adminBadge.className = 'admin-badge';
+                adminBadge.innerHTML = '<i class="fas fa-crown"></i> АДМИН';
+                profileUserNameElement.appendChild(adminBadge);
+            }
+            
+            document.getElementById('profileUserEmail').textContent = currentUser.email;
+            document.getElementById('profileUserId').textContent = `ID: ${currentUser.id}`;
+            
+            // Обновляем статистику
+            document.getElementById('favoritesCount').textContent = currentUser.favorites.length;
+            document.getElementById('watchedCount').textContent = currentUser.watched.length;
+            document.getElementById('watchlistCount').textContent = currentUser.watchlist.length;
+            document.getElementById('ratingsCount').textContent = currentUser.ratings ? Object.keys(currentUser.ratings).length : 0;
+            
+            // Загружаем фильмы для каждой вкладки
+            loadProfileMovies('favorites');
+            
+            // Показываем модальное окно
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+        
+        function loadProfileMovies(tab) {
+            // Скрываем все вкладки
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Активируем выбранную вкладку
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            
+            // Получаем список фильмов для выбранной вкладки
+            let movieIds = [];
+            if (tab === 'favorites') {
+                movieIds = currentUser.favorites;
+            } else if (tab === 'watched') {
+                movieIds = currentUser.watched;
+            } else if (tab === 'watchlist') {
+                movieIds = currentUser.watchlist;
+            } else if (tab === 'ratings') {
+                // Для вкладки с оценками берем фильмы, которые пользователь оценил
+                movieIds = currentUser.ratings ? Object.keys(currentUser.ratings) : [];
+            }
+            
+            // Фильтруем фильмы по ID
+            const movies = moviesData.filter(movie => movieIds.includes(movie.googleDriveId));
+            
+            // Отображаем фильмы
+            const containerId = `profile${tab.charAt(0).toUpperCase() + tab.slice(1)}List`;
+            
+            if (movies.length === 0) {
+                document.getElementById(containerId).innerHTML = `
+                    <div class="empty-list-message">
+                        <i class="fas fa-${tab === 'favorites' ? 'heart' : tab === 'watched' ? 'check-circle' : tab === 'watchlist' ? 'bookmark' : 'star'}"></i>
+                        <p>Список ${getTabTitle(tab)} пуст</p>
+                    </div>
+                `;
+            } else {
+                // Для вкладки с оценками показываем также рейтинг пользователя
+                if (tab === 'ratings') {
+                    renderMoviesWithRatings(movies, containerId);
+                } else {
+                    renderMovies(movies, containerId);
+                }
+            }
+        }
+        
+        // Новая функция для отображения фильмов с оценками
+        function renderMoviesWithRatings(movies, containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            movies.forEach(movie => {
+                const userRating = currentUser.ratings[movie.googleDriveId];
+                
+                const movieElement = document.createElement('div');
+                movieElement.className = 'movie-card fade-in';
+                movieElement.innerHTML = `
+                    <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-meta">
+                            <span>${movie.year}</span>
+                            <div class="user-rating">
+                                <span>Ваша оценка: </span>
+                                <div class="rating-stars">
+                                    ${[1, 2, 3, 4, 5].map(star => `
+                                        <i class="fas fa-star ${userRating >= star ? 'active' : ''}"></i>
+                                    `).join('')}
+                                </div>
+                                <span class="rating-value">${userRating}/5</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                movieElement.addEventListener('click', () => {
+                    openMovieDetails(movie);
+                });
+                
+                container.appendChild(movieElement);
+            });
+        }
+        
+        function getTabTitle(tab) {
+            const titles = {
+                'favorites': 'избранного',
+                'watched': 'просмотренных',
+                'watchlist': 'фильмов для просмотра',
+                'ratings': 'оцененных фильмов'
+            };
+            return titles[tab] || '';
+        }
+        
+        // Функции для админ-панели
+        function showModerationPanel() {
+            const moderationPanel = document.getElementById('moderationPanel');
+            moderationPanel.style.display = 'block';
+            loadModerationComments('all');
+        }
+        
+        function loadModerationComments(filter) {
+            const moderationList = document.getElementById('moderationCommentsList');
+            moderationList.innerHTML = '';
+            
+            let filteredComments = [...comments];
+            
+            if (filter === 'reported') {
+                filteredComments = filteredComments.filter(comment => comment.reports.length > 0);
+            } else if (filter === 'recent') {
+                // Последние 50 комментариев
+                filteredComments.sort((a, b) => b.timestamp - a.timestamp);
+                filteredComments = filteredComments.slice(0, 50);
+            }
+            
+            if (filteredComments.length === 0) {
+                moderationList.innerHTML = '<p class="text-center">Нет комментариев для модерации</p>';
+                return;
+            }
+            
+            filteredComments.forEach(comment => {
+                const movie = moviesData.find(m => m.googleDriveId === comment.movieId);
+                const movieTitle = movie ? movie.title : 'Неизвестный фильм';
+                
+                const commentElement = document.createElement('div');
+                commentElement.className = `moderation-comment ${comment.pinned ? 'pinned' : ''} ${comment.reports.length > 0 ? 'reported' : ''}`;
+                
+                commentElement.innerHTML = `
+                    <div class="moderation-comment-header">
+                        <div>
+                            <div class="moderation-comment-movie">${movieTitle}</div>
+                            <div class="comment-author">${comment.userName}</div>
+                        </div>
+                        <div class="comment-date">${new Date(comment.timestamp).toLocaleString()}</div>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="moderation-comment-actions">
+                        <button class="admin-btn btn-delete" data-comment-id="${comment.id}" data-action="mod-delete">
+                            Удалить
+                        </button>
+                        <button class="admin-btn btn-pin" data-comment-id="${comment.id}" data-action="mod-pin">
+                            ${comment.pinned ? 'Открепить' : 'Закрепить'}
+                        </button>
+                        <span>Жалоб: ${comment.reports.length}</span>
+                    </div>
+                `;
+                
+                moderationList.appendChild(commentElement);
+            });
+            
+            // Добавляем обработчики для кнопок модерации
+            moderationList.querySelectorAll('[data-action="mod-delete"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (deleteComment(commentId)) {
+                        loadModerationComments(filter);
+                    }
+                });
+            });
+            
+            moderationList.querySelectorAll('[data-action="mod-pin"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const commentId = this.dataset.commentId;
+                    if (togglePinComment(commentId)) {
+                        loadModerationComments(filter);
+                    }
+                });
+            });
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем, есть ли авторизованный пользователь
+            const savedUser = localStorage.getItem('kitsunez_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                
+                // Проверяем, является ли пользователь специальным администратором
+                if (currentUser.id === ADMIN_USER_ID) {
+                    currentUser.isAdmin = true;
+                    localStorage.setItem('kitsunez_current_user', JSON.stringify(currentUser));
+                    
+                    // Обновляем также в общем списке пользователей
+                    const userIndex = users.findIndex(u => u.id === ADMIN_USER_ID);
+                    if (userIndex !== -1) {
+                        users[userIndex].isAdmin = true;
+                        localStorage.setItem('kitsunez_users', JSON.stringify(users));
+                    }
+                }
+                
+                // Инициализируем ratings, если их нет
+                if (!currentUser.ratings) {
+                    currentUser.ratings = {};
+                }
+                
+                updateUIForUser();
+            }
+            
+            // Инициализируем отображение фильмов
+            renderMovies(moviesData, 'popularMovies');
+            renderMovies(moviesData.filter(movie => movie.year >= 2023), 'newMovies');
+            renderMovies(moviesData.filter(movie => movie.rating >= 8.0), 'recommendedMovies');
+            
+            // Добавляем обработчик для кнопки полноэкранного режима сайта
+            document.getElementById('fullscreenButton').addEventListener('click', toggleFullscreenSite);
+            
+            // Настройка обработчиков для полноэкранного режима видеоплеера
+            document.addEventListener('fullscreenchange', handlePlayerFullScreenChange);
+            document.addEventListener('webkitfullscreenchange', handlePlayerFullScreenChange);
+            document.addEventListener('msfullscreenchange', handlePlayerFullScreenChange);
+            
+            // Переключение категорий
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.dataset.category;
+                    const sortedBy = document.getElementById('sortBy').value;
+                    const filteredMovies = sortMovies(filterMoviesByCategory(category), sortedBy);
+                    
+                    renderMovies(filteredMovies, 'popularMovies');
+                });
+            });
+            
+            // Сортировка
+            document.getElementById('sortBy').addEventListener('change', function() {
+                const category = document.querySelector('.category-btn.active').dataset.category;
+                const sortedBy = this.value;
+                const filteredMovies = sortMovies(filterMoviesByCategory(category), sortedBy);
+                
+                renderMovies(filteredMovies, 'popularMovies');
+            });
+            
+            // Поиск
+            document.getElementById('searchButton').addEventListener('click', function() {
+                const searchInput = document.getElementById('searchInput');
+                const query = searchInput.value;
+                
+                const results = searchMovies(query);
+                renderMovies(results, 'popularMovies');
+                
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-search"></i> Результаты поиска: "${query}"`;
+            });
+            
+            // Поиск по нажатию Enter
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('searchButton').click();
+                }
+            });
+            
+            // Кнопки авторизации
+            document.getElementById('loginButton').addEventListener('click', showLoginModal);
+            document.getElementById('registerButton').addEventListener('click', showRegisterModal);
+            
+            // Форма входа
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                loginUser(email, password);
+            });
+            
+            // Форма регистрации
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('registerName').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('registerConfirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Пароли не совпадают');
+                    return;
+                }
+                
+                registerUser(name, email, password);
+            });
+            
+            // Кнопка выхода
+            document.getElementById('logoutButton').addEventListener('click', function(e) {
+                e.preventDefault();
+                logoutUser();
+                
+                // Если открыты детали фильма, перезагружаем комментарии
+                if (currentMovieId) {
+                    loadComments(currentMovieId);
+                    
+                    const commentForm = document.getElementById('commentForm');
+                    const loginToComment = document.getElementById('loginToComment');
+                    
+                    commentForm.style.display = 'none';
+                    loginToComment.style.display = 'block';
+                }
+            });
+            
+            // Выпадающее меню пользователя
+            document.getElementById('userAvatar').addEventListener('click', function() {
+                document.getElementById('dropdownMenu').classList.toggle('show');
+            });
+            
+            // Закрытие выпадающего меню при клике вне его
+            window.addEventListener('click', function(e) {
+                if (!e.target.matches('.user-avatar')) {
+                    const dropdown = document.getElementById('dropdownMenu');
+                    if (dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                    }
+                }
+            });
+            
+            // Ссылки на личные списки
+            document.getElementById('watchedLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!currentUser) {
+                    showLoginModal();
+                    return;
+                }
+                
+                const watchedMovies = moviesData.filter(movie => 
+                    currentUser.watched.includes(movie.googleDriveId)
+                );
+                
+                renderMovies(watchedMovies, 'popularMovies');
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-check-circle"></i> Просмотрено`;
+            });
+            
+            document.getElementById('watchlistLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!currentUser) {
+                    showLoginModal();
+                    return;
+                }
+                
+                const watchlistMovies = moviesData.filter(movie => 
+                    currentUser.watchlist.includes(movie.googleDriveId)
+                );
+                
+                renderMovies(watchlistMovies, 'popularMovies');
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-bookmark"></i> Хочу посмотреть`;
+            });
+            
+            document.getElementById('ratingsLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!currentUser) {
+                    showLoginModal();
+                    return;
+                }
+                
+                const ratedMovies = moviesData.filter(movie => 
+                    currentUser.ratings && currentUser.ratings[movie.googleDriveId]
+                );
+                
+                renderMovies(ratedMovies, 'popularMovies');
+                document.querySelector('.section-title').innerHTML = `<i class="fas fa-star"></i> Мои оценки`;
+            });
+            
+            // Кнопка профиля
+            document.getElementById('profileLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                showProfileModal();
+            });
+            
+            // Кнопка админ-панели
+            document.getElementById('adminLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('adminSection').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('dropdownMenu').classList.remove('show');
+            });
+            
+            // Кнопка модерации комментариев
+            document.getElementById('moderateCommentsBtn').addEventListener('click', function() {
+                showModerationPanel();
+            });
+            
+            // Кнопка обновления комментариев
+            document.getElementById('refreshCommentsBtn').addEventListener('click', function() {
+                const activeFilter = document.querySelector('.moderation-filter.active').dataset.filter;
+                loadModerationComments(activeFilter);
+            });
+            
+            // Фильтры модерации
+            document.querySelectorAll('.moderation-filter').forEach(filter => {
+                filter.addEventListener('click', function() {
+                    document.querySelectorAll('.moderation-filter').forEach(f => f.classList.remove('active'));
+                    this.classList.add('active');
+                    loadModerationComments(this.dataset.filter);
+                });
+            });
+            
+            // Закрытие плеера при нажатии на Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (document.fullscreenElement) {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        }
+                    } else {
+                        closePlayer();
+                        closeMovieDetails();
+                        closeModal('profileModal');
+                    }
+                }
+            });
+            
+            // Закрытие плеера при клике вне области
+            document.getElementById('videoPlayer').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePlayer();
+                }
+            });
+            
+            // Закрытие деталей фильма при клике вне области
+            document.getElementById('movieDetails').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeMovieDetails();
+                }
+            });
+            
+            // Закрытие профиля при клике вне области
+            document.getElementById('profileModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal('profileModal');
+                }
+            });
+            
+            // Кнопка закрытия плеера
+            document.getElementById('closePlayerBtn').addEventListener('click', closePlayer);
+            
+            // Кнопка закрытия деталей фильма
+            document.getElementById('closeDetailsBtn').addEventListener('click', closeMovieDetails);
+            
+            // Кнопка закрытия профиля
+            document.getElementById('closeProfileModalBtn').addEventListener('click', function() {
+                closeModal('profileModal');
+            });
+            
+            // Кнопка полноэкранного режима плеера
+            document.getElementById('playerFullscreenBtn').addEventListener('click', toggleFullScreen);
+            
+            // Кнопка начала просмотра
+            document.getElementById('startWatchingBtn').addEventListener('click', function() {
+                if (moviesData.length > 0) {
+                    openPlayer(moviesData[0].title, moviesData[0].googleDriveId, moviesData[0].duration);
+                }
+            });
+            
+            // Кнопка подробнее
+            document.getElementById('moreInfoBtn').addEventListener('click', function() {
+                if (moviesData.length > 0) {
+                    openMovieDetails(moviesData[0]);
+                }
+            });
+            
+            // Навигация по разделам
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    switchSection(section);
+                });
+            });
+            
+            // Навигация в футере
+            document.querySelectorAll('.footer-column a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.dataset.section;
+                    if (section) {
+                        switchSection(section);
+                    }
+                });
+            });
+            
+            // Модальные окна
+            document.getElementById('closeLoginModalBtn').addEventListener('click', function() {
+                closeModal('loginModal');
+            });
+            
+            document.getElementById('closeRegisterModalBtn').addEventListener('click', function() {
+                closeModal('registerModal');
+            });
+            
+            document.getElementById('showRegisterModalLink').addEventListener('click', function() {
+                showRegisterModal();
+            });
+            
+            document.getElementById('showLoginModalLink').addEventListener('click', function() {
+                showLoginModal();
+            });
+            
+            // Обработчики событий полноэкранного режима
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('msfullscreenchange', handleFullscreenChange);
+            
+            // Обработчик отправки комментария
+            document.getElementById('submitComment').addEventListener('click', function() {
+                const textarea = document.getElementById('commentText');
+                const text = textarea.value.trim();
+                
+                if (text && currentMovieId) {
+                    if (addComment(currentMovieId, text)) {
+                        textarea.value = '';
+                        loadComments(currentMovieId);
+                    }
+                }
+            });
+            
+            // Кнопка входа для комментирования
+            document.getElementById('loginToCommentBtn').addEventListener('click', function() {
+                closeMovieDetails();
+                showLoginModal();
+            });
+            
+            // Переключение вкладок в профиле
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Убираем активный класс у всех вкладок
+                    document.querySelectorAll('.profile-tab').forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Добавляем активный класс текущей вкладке
+                    this.classList.add('active');
+                    
+                    // Загружаем соответствующие фильмы
+                    const tabName = this.dataset.tab;
+                    loadProfileMovies(tabName);
+                });
+            });
+            
+            // Кнопки админ-панели
+            document.getElementById('addMovieBtn').addEventListener('click', function() {
+                alert('Функция добавления фильма будет реализована в будущем обновлении!');
+            });
+            
+            document.getElementById('manageUsersBtn').addEventListener('click', function() {
+                alert('Функция управления пользователями будет реализована в будущем обновлении!');
+            });
+        });
+
+        // Эмуляция YouTube API
+        async function fetchYouTubeVideos(query) {
+            console.log(`Ищем видео по запросу: ${query}`);
+            
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const hasExcludedKeywords = EXCLUDED_KEYWORDS.some(keyword => 
+                query.toLowerCase().includes(keyword.toLowerCase())
+            );
+            
+            if (hasExcludedKeywords) {
+                return [];
+            }
+            
+            const hasIncludedKeywords = INCLUDED_KEYWORDS.some(keyword => 
+                query.toLowerCase().includes(keyword.toLowerCase())
+            );
+            
+            if (!hasIncludedKeywords) {
+                return [];
+            }
+            
+            return [{
+                id: { videoId: 'test_id' },
+                snippet: {
+                    title: query,
+                    description: 'Описание фильма',
+                    thumbnails: {
+                        high: { url: 'https://via.placeholder.com/300x450/2a2a2a/ffffff?text=Постер' }
+                    }
+                },
+                contentDetails: { duration: 'PT2H18M' }
+            }];
+        }
+    </script>
+</body>
+</html>
